@@ -2,7 +2,7 @@
 
 # <img src="assets/icons/logo.svg" width="32" height="32" align="center" alt="" /> Overwatcher
 
-**A supervisor skill for multi-agent coding workflows. Splits work into disjoint file domains, then rejects any worker output it can't verify by running it.**
+**A supervisor skill for multi-agent coding workflows. Splits work into disjoint file domains, then rejects worker output that breaks its contract or fails verification.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-2563eb.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](https://python.org)
@@ -27,7 +27,7 @@ Overwatcher counters each:
 | :-- | :-- |
 | Drift | Per-worker contract listing authorized files; out-of-scope diffs are rejected |
 | Collisions | Contracts are disjoint; no two workers share a file |
-| False "done" | Claims are ignored. Diff, linters, and tests are run and checked |
+| False "done" | Claims are ignored. The diff is scanned for known shortcuts and a verify command must exit 0 |
 
 ---
 
@@ -64,7 +64,7 @@ flowchart TD
 1. **No trust in summaries.** Output is unverified until inspected and executed.
 2. **Adversarial review.** Look for edge cases, race conditions, leaks, and swallowed errors.
 3. **Disjoint ownership.** Workers never touch overlapping files.
-4. **Reject, don't patch.** Send failures back with line-numbered proof. The supervisor never fixes worker code itself.
+4. **Reject, don't patch.** Send failures back with line-numbered proof. The supervisor only patches after repeated worker failures.
 
 ### Phases
 
@@ -76,7 +76,7 @@ flowchart TD
 **2. Dispatch.** Start workers concurrently with domain-specific prompts. Wait on completion signals; don't poll.
 
 **3. Cross-examine.** When a worker reports done:
-1. **Diff:** confirm changes stay inside the contract; reject mocks, boilerplate, and new dependencies.
+1. **Diff:** confirm changes stay inside the contract; reject mocks, boilerplate, and new dependencies. The CLI automates the file-boundary and pattern checks.
 2. **Build:** run the project's compilers and linters (`tsc --noEmit`, `ruff`, `flake8`, ...).
 3. **Test:** run the targeted tests; check that assertions are real.
 4. **Verdict:** `REJECTION NOTICE` on any defect, otherwise `AUDITED & VERIFIED`.
@@ -87,22 +87,43 @@ flowchart TD
 
 ## Cross-examiner CLI
 
-`scripts/cross_examiner.py` runs the deterministic checks (file boundaries, banned patterns, test command) without an LLM.
+`scripts/cross_examiner.py` is a standalone auditor. It needs only Python 3.8+ and git; no LLM.
 
 ```bash
 python scripts/cross_examiner.py \
   --worker "auth_guard" \
   --domain "Authentication" \
   --allowed-files "src/core/auth.py" "tests/test_auth.py" \
-  --verify-cmd "pytest tests/test_auth.py -v"
+  --verify-cmd "pytest tests/test_auth.py -v" \
+  --repo-dir .
 ```
 
-| Flag | Purpose |
-| :-- | :-- |
-| `--worker` | Worker ID, used in reports |
-| `--domain` | Domain name |
-| `--allowed-files` | Files the worker may change |
-| `--verify-cmd` | Command that must pass |
+| Flag | Default | Purpose |
+| :-- | :-- | :-- |
+| `--worker` | `worker_subagent` | Worker ID, shown in the notice |
+| `--domain` | `core` | Domain name, shown in the notice |
+| `--allowed-files` | none | Glob patterns the worker may change. Boundary check is skipped if empty |
+| `--verify-cmd` | none | Shell command that must exit 0 |
+| `--repo-dir` | `.` | Git repository to audit |
+
+**Checks**
+1. **Boundaries:** files from `git status` must match an allowed glob (full path or basename, via `fnmatch`).
+2. **Diff patterns:** added lines in `git diff HEAD` are regex-scanned for:
+   - `except: pass`, `except Exception: pass`, empty `catch (...) {}`
+   - `assert True`, `assert 1 == 1`, `expect(true).toBe(true)`
+   - `debugger`, `breakpoint()`
+3. **Verify command:** run in the repo; non-zero exit is a failure (last 10 output lines are reported).
+
+**Exit codes:** `0` = `AUDITED & VERIFIED`, `1` = `REJECTED` (prints a rejection notice).
+
+### Limitations
+- Pattern matching is regex on diff text, not AST analysis. It catches common shortcuts, not all.
+- Audits the **working tree** against `HEAD`. Uncommitted changes only.
+- With parallel workers in one working tree, each audit sees the others' edits as violations. Give each worker its own `git worktree` or branch.
+- Basename matching means `auth.py` also matches `other/dir/auth.py`. Use full-path globs.
+- Untracked files count toward the boundary check, but their contents are not pattern-scanned.
+- `--verify-cmd` runs with `shell=True`. Pass only trusted commands.
+- Linters and builds run only if you put them in `--verify-cmd`.
 
 Run its tests:
 
