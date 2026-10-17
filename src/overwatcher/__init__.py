@@ -3,7 +3,7 @@ Overwatcher
 Hierarchical Multi-Agent Supervisor & Adversarial Red-Team Cross-Examiner.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Fahad Bin Nasir"
 
 from overwatcher.cross_examiner import (

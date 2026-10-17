@@ -1,12 +1,13 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="Overwatcher - Hierarchical Multi-Agent Supervisor" width="100%" />
+<img src="https://raw.githubusercontent.com/FahadBinNasir/overwatcher/main/assets/banner.svg" alt="Overwatcher - Hierarchical Multi-Agent Supervisor" width="100%" />
 
-# <img src="assets/icons/logo.svg" width="32" height="32" align="center" alt="" /> Overwatcher
+# <img src="https://raw.githubusercontent.com/FahadBinNasir/overwatcher/main/assets/icons/logo.svg" width="32" height="32" align="center" alt="Overwatcher Logo" /> Overwatcher
 
-**A supervisor skill for multi-agent coding workflows. Splits work into disjoint file domains, then rejects worker output that breaks its contract or fails verification.**
+**A supervisor skill and deterministic auditor for multi-agent coding workflows. Splits work into disjoint file domains, then rejects worker output that breaks its contract or fails verification.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-2563eb.svg)](LICENSE)
+[![PyPI version](https://img.shields.io/pypi/v/overwatcher-ai.svg?color=2563eb)](https://pypi.org/project/overwatcher-ai/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-2563eb.svg)](https://github.com/FahadBinNasir/overwatcher/blob/main/LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 
 [Quick start](#quick-start) · [How it works](#how-it-works) · [CLI](#cross-examiner-cli) · [Examples](#examples) · [Contributing](#contributing)
@@ -44,12 +45,17 @@ pip install overwatcher-ai
 pip install git+https://github.com/FahadBinNasir/overwatcher.git
 ```
 
-### 2. Install as an Agent Skill
-Claude Code shown; other platforms [below](#platform-install-paths):
+### 2. Scaffold the Supervisor Skill
+Run `overwatcher init` inside any repository to automatically install the supervisor persona and templates:
 
 ```bash
-mkdir -p .claude/skills/overwatcher
-cp SKILL.md .claude/skills/overwatcher/SKILL.md
+# Auto-detects and installs for Claude Code, Antigravity, and Cursor:
+overwatcher init
+
+# Or target a specific platform:
+overwatcher init --platform claude
+overwatcher init --platform antigravity
+overwatcher init --platform cursor
 ```
 
 Then ask your agent:
@@ -80,7 +86,7 @@ flowchart TD
 
 ### Phases
 
-**1. Partition.** Split the goal into 2–4 independent domains (e.g. Auth, DB, API, UI). Give each worker a [contract](templates/worker_contract.md):
+**1. Partition.** Split the goal into 2–4 independent domains (e.g. Auth, DB, API, UI). Give each worker a [contract](https://github.com/FahadBinNasir/overwatcher/blob/main/templates/worker_contract.md):
 - *Authorized targets:* exact file paths
 - *Acceptance criteria:* deliverables and test targets
 - *Forbidden:* mock fallbacks, leaked secrets, API breakage
@@ -93,7 +99,7 @@ flowchart TD
 3. **Test:** run the targeted tests; check that assertions are real.
 4. **Verdict:** `REJECTION NOTICE` on any defect, otherwise `AUDITED & VERIFIED`.
 
-**4. Synthesize.** Run the full regression suite, then produce the [master report](templates/master_adjudication_report.md) with logs.
+**4. Synthesize.** Run the full regression suite, then produce the [master report](https://github.com/FahadBinNasir/overwatcher/blob/main/templates/master_adjudication_report.md) with logs.
 
 ---
 
@@ -211,10 +217,10 @@ Re-submit only after passing: `{verification_command}`.
 
 | File | Shows |
 | :-- | :-- |
-| [sample_workflow.md](examples/sample_workflow.md) | End-to-end supervised refactor |
-| [sample_worker_contract.md](examples/sample_worker_contract.md) | A filled-in contract |
-| [sample_rejection_order.md](examples/sample_rejection_order.md) | A real rejection notice |
-| [sample_adjudication_report.md](examples/sample_adjudication_report.md) | A passing report |
+| [sample_workflow.md](https://github.com/FahadBinNasir/overwatcher/blob/main/examples/sample_workflow.md) | End-to-end supervised refactor |
+| [sample_worker_contract.md](https://github.com/FahadBinNasir/overwatcher/blob/main/examples/sample_worker_contract.md) | A filled-in contract |
+| [sample_rejection_order.md](https://github.com/FahadBinNasir/overwatcher/blob/main/examples/sample_rejection_order.md) | A real rejection notice |
+| [sample_adjudication_report.md](https://github.com/FahadBinNasir/overwatcher/blob/main/examples/sample_adjudication_report.md) | A passing report |
 
 ---
 
@@ -223,7 +229,7 @@ Re-submit only after passing: `{verification_command}`.
 ```
 pyproject.toml        # PEP 517 / PEP 621 package config
 SKILL.md              # skill spec
-src/overwatcher/      # core Python package & CLI implementation
+src/overwatcher/      # core Python package, init tool & CLI implementation
 templates/            # contract, rejection, report templates
 scripts/              # standalone wrapper script
 tests/                # cross_examiner tests
@@ -245,4 +251,4 @@ New audit rules, heuristics, and language support are welcome.
 
 ## License
 
-[MIT](LICENSE) © 2026 Fahad Bin Nasir
+[MIT](https://github.com/FahadBinNasir/overwatcher/blob/main/LICENSE) © 2026 Fahad Bin Nasir

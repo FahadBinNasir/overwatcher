@@ -17,7 +17,7 @@ from overwatcher import (
 
 class TestOverwatcherCrossExaminer(unittest.TestCase):
     def test_package_metadata(self):
-        self.assertEqual(overwatcher.__version__, "0.1.0")
+        self.assertEqual(overwatcher.__version__, "0.1.1")
         self.assertEqual(overwatcher.__author__, "Fahad Bin Nasir")
 
     def test_file_boundaries_clean(self):
@@ -79,6 +79,16 @@ class TestOverwatcherCrossExaminer(unittest.TestCase):
         # Test basic instantiation and properties
         self.assertEqual(examiner.worker_id, "tester")
         self.assertEqual(examiner.domain, "unit_test")
+
+    def test_init_command(self):
+        import tempfile
+        from overwatcher.init_cmd import run_init
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = run_init(platform="all", cwd=tmpdir)
+            self.assertEqual(result, 0)
+            self.assertTrue(os.path.exists(os.path.join(tmpdir, ".claude", "skills", "overwatcher", "SKILL.md")))
+            self.assertTrue(os.path.exists(os.path.join(tmpdir, ".agents", "skills", "overwatcher", "SKILL.md")))
+            self.assertTrue(os.path.exists(os.path.join(tmpdir, "templates", "worker_contract.md")))
 
 
 if __name__ == "__main__":

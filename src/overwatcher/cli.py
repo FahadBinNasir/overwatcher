@@ -9,6 +9,31 @@ from overwatcher.cross_examiner import CrossExaminer
 
 
 def main(argv=None):
+    if argv is None:
+        argv = sys.argv[1:]
+
+    # Subcommand: init
+    if argv and argv[0] == "init":
+        init_parser = argparse.ArgumentParser(
+            prog="overwatcher init",
+            description="Scaffold the Overwatcher supervisor skill and contract templates into your repository"
+        )
+        init_parser.add_argument(
+            "--platform",
+            choices=["claude", "antigravity", "cursor", "all"],
+            default="all",
+            help="Agent platform target (default: all)"
+        )
+        init_parser.add_argument(
+            "--dir",
+            default=".",
+            help="Target repository directory (default: .)"
+        )
+        init_args = init_parser.parse_args(argv[1:])
+        from overwatcher.init_cmd import run_init
+        sys.exit(run_init(platform=init_args.platform, cwd=init_args.dir))
+
+    # Standard audit command
     parser = argparse.ArgumentParser(
         prog="overwatcher",
         description="Overwatcher: Hierarchical Multi-Agent Supervisor & Adversarial Red-Team Cross-Examiner"
