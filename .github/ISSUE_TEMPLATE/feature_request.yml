@@ -1,0 +1,31 @@
+name: Feature Request
+description: Propose a new supervisor protocol, audit heuristic, or agent platform integration
+title: "[Feat]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to improve deterministic agent supervision or cross-examination? We'd love to hear it.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: What agent failure mode or limitation does this feature solve?
+      placeholder: Agents running in framework X often bypass boundary Y because...
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the recommended protocol, contract field, or CLI check.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other approaches or existing workarounds considered.
+    validations:
+      required: false

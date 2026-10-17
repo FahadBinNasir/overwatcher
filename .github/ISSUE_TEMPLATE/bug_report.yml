@@ -1,0 +1,43 @@
+name: Bug Report
+description: Report a bug, boundary escape, or false positive in Overwatcher
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting an issue! Please provide deterministic, reproducible steps.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the defect or false positive.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating System, Python version, Git version, and Agent platform (e.g. Claude Code, Antigravity, Cursor)
+      placeholder: Windows 11 / Python 3.11 / Claude Code
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to Reproduce
+      description: Provide exact commands or a diff snippet demonstrating the bug.
+      placeholder: |
+        1. Run `python scripts/cross_examiner.py ...`
+        2. Introduce file with ...
+        3. Observe false positive / exit code mismatch
+    validations:
+      required: true
+  - type: textarea
+    id: terminal_logs
+    attributes:
+      label: Terminal Logs & Evidence
+      description: Paste the actual command output and stack trace.
+      render: shell
+    validations:
+      required: false
