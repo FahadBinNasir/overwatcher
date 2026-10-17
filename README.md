@@ -38,7 +38,7 @@ Overwatcher counters each:
 ### 1. Install CLI & Python package
 ```bash
 # Install via pip:
-pip install overwatcher
+pip install overwatcher-ai
 
 # Or install directly from GitHub:
 pip install git+https://github.com/FahadBinNasir/overwatcher.git
