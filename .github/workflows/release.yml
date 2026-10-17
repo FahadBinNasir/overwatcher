@@ -37,12 +37,21 @@ jobs:
         tar -czvf "dist/overwatcher-${TAG_NAME}.tar.gz" SKILL.md templates/ scripts/ examples/ assets/ LICENSE README.md
         zip -r "dist/overwatcher-${TAG_NAME}.zip" SKILL.md templates/ scripts/ examples/ assets/ LICENSE README.md
 
+    - name: Prepare Release Notes
+      run: |
+        TAG_NAME="${{ github.ref_name || inputs.tag_name }}"
+        if [ -f "RELEASE_NOTES_${TAG_NAME}.md" ]; then
+          cp "RELEASE_NOTES_${TAG_NAME}.md" release_notes.md
+        else
+          cp CHANGELOG.md release_notes.md
+        fi
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ github.ref_name || inputs.tag_name }}
         name: "Release ${{ github.ref_name || inputs.tag_name }}"
-        generate_release_notes: true
+        body_path: release_notes.md
         files: |
           dist/overwatcher-*.tar.gz
           dist/overwatcher-*.zip
