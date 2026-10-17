@@ -2,10 +2,13 @@ import unittest
 import os
 import sys
 
-# Add scripts directory to path
+# Add src and scripts directories to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts")))
 
-from cross_examiner import (
+import overwatcher
+from overwatcher import (
+    CrossExaminer,
     check_file_boundaries,
     audit_diff_for_slop,
     format_rejection_notice,
@@ -13,6 +16,10 @@ from cross_examiner import (
 
 
 class TestOverwatcherCrossExaminer(unittest.TestCase):
+    def test_package_metadata(self):
+        self.assertEqual(overwatcher.__version__, "0.1.0")
+        self.assertEqual(overwatcher.__author__, "Fahad Bin Nasir")
+
     def test_file_boundaries_clean(self):
         modified = ["src/auth/jwt.py", "tests/test_jwt.py"]
         allowed = ["src/auth/*", "tests/*"]
@@ -61,6 +68,17 @@ class TestOverwatcherCrossExaminer(unittest.TestCase):
         self.assertIn("Worker ID: worker_auth", notice)
         self.assertIn("Bare exception swallowing", notice)
         self.assertIn("pytest tests/test_auth.py", notice)
+
+    def test_cross_examiner_class_clean(self):
+        examiner = CrossExaminer(
+            allowed_files=["*"],
+            verify_cmd="python -c \"exit(0)\"",
+            worker_id="tester",
+            domain="unit_test"
+        )
+        # Test basic instantiation and properties
+        self.assertEqual(examiner.worker_id, "tester")
+        self.assertEqual(examiner.domain, "unit_test")
 
 
 if __name__ == "__main__":

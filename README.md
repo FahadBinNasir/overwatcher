@@ -35,7 +35,17 @@ Overwatcher counters each:
 
 ## Quick start
 
-Install as a skill (Claude Code shown; other platforms [below](#platform-install-paths)):
+### 1. Install CLI & Python package
+```bash
+# Install via pip:
+pip install overwatcher
+
+# Or install directly from GitHub:
+pip install git+https://github.com/FahadBinNasir/overwatcher.git
+```
+
+### 2. Install as an Agent Skill
+Claude Code shown; other platforms [below](#platform-install-paths):
 
 ```bash
 mkdir -p .claude/skills/overwatcher
@@ -89,15 +99,19 @@ flowchart TD
 
 ## Cross-examiner CLI
 
-`scripts/cross_examiner.py` is a standalone auditor. It needs only Python 3.8+ and git; no LLM.
+Run via the installed `overwatcher` command or directly via `scripts/cross_examiner.py`. It requires only Python 3.8+ and git; no LLM needed.
 
 ```bash
-python scripts/cross_examiner.py \
+# Run via installed CLI:
+overwatcher \
   --worker "auth_guard" \
   --domain "Authentication" \
   --allowed-files "src/core/auth.py" "tests/test_auth.py" \
   --verify-cmd "pytest tests/test_auth.py -v" \
   --repo-dir .
+
+# Or run via standalone script:
+python scripts/cross_examiner.py ...
 ```
 
 | Flag | Default | Purpose |
@@ -207,12 +221,14 @@ Re-submit only after passing: `{verification_command}`.
 ## Repository layout
 
 ```
+pyproject.toml        # PEP 517 / PEP 621 package config
 SKILL.md              # skill spec
+src/overwatcher/      # core Python package & CLI implementation
 templates/            # contract, rejection, report templates
-scripts/              # cross_examiner.py
+scripts/              # standalone wrapper script
 tests/                # cross_examiner tests
 examples/             # worked examples
-assets/icons/         # logo
+assets/               # logo, icons, and social banner
 ```
 
 ---

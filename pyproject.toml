@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "overwatcher"
+version = "0.1.0"
+description = "Hierarchical Multi-Agent Supervisor & Adversarial Red-Team Cross-Examiner"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Fahad Bin Nasir", email = "fahad@fahadbinnasir.tech" }
+]
+keywords = [
+    "ai-agents",
+    "multi-agent",
+    "supervisor",
+    "cross-examiner",
+    "orchestrator",
+    "red-team",
+    "code-review",
+    "claude-code",
+    "antigravity",
+    "llm-ops"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.scripts]
+overwatcher = "overwatcher.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/FahadBinNasir/overwatcher"
+Documentation = "https://github.com/FahadBinNasir/overwatcher#readme"
+Repository = "https://github.com/FahadBinNasir/overwatcher"
+Issues = "https://github.com/FahadBinNasir/overwatcher/issues"
+Changelog = "https://github.com/FahadBinNasir/overwatcher/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where = ["src"]
