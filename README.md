@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="assets/banner.svg" alt="Overwatcher - Hierarchical Multi-Agent Supervisor" width="100%" />
+
 # <img src="assets/icons/logo.svg" width="32" height="32" align="center" alt="" /> Overwatcher
 
 **A supervisor skill for multi-agent coding workflows. Splits work into disjoint file domains, then rejects worker output that breaks its contract or fails verification.**
